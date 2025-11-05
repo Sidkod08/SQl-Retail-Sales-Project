@@ -1,0 +1,190 @@
+DROP DATABASE IF EXISTS SQL_PROJECT_1;
+CREATE DATABASE IF NOT EXISTS SQL_PROJECT_1;
+DROP TABLE IF EXISTS retail_sales;
+CREATE TABLE retail_sales
+(
+transactions_id ,
+	sale_date DATE,
+	sale_time TIME,
+	customer_id	 INT,
+    gender VARCHAR(15),
+	age INT,
+	category VARCHAR(15),
+	quantiy	INT,
+    price_per_unit FLOAT,
+	cogs FLOAT,
+	total_sale FLOAT
+    );
+SELECT 
+    *
+FROM
+    sql_project_1.retail_sales;
+DROp TABLE retail_Sales;
+CREATE TABLE retail_sales (
+    transactions_id INT,
+    sale_date DATE,
+    sale_time TIME,
+    customer_id INT,
+    gender VARCHAR(15),
+    age INT,
+    category VARCHAR(15),
+    quantiy INT,
+    price_per_unit FLOAT,
+    cogs FLOAT,
+    total_sale FLOAT
+);
+SELECT 
+    *
+FROM
+    sql_project_1.retail_sales;
+SELECT 
+    transactions_id
+FROM
+    retail_sales;
+SELECT 
+    COUNT(*) transactions_id
+FROM
+    retail_sales;
+SELECT 
+    *
+FROM
+    sql_project_1.retail_sales;
+    
+    -- DATA CLEANING
+    
+SELECT 
+    *
+FROM
+    retail_sales
+WHERE
+    transactions_id IS NULL
+        OR sale_date IS NULL
+        OR sale_time IS NULL
+        OR customer_id IS NULL
+        OR gender IS NULL
+        OR age IS NULL
+        OR category IS NULL
+        OR quantiy IS NULL
+        OR price_per_unit IS NULL
+        OR cogs IS NULL
+        OR total_sale IS NULL;
+        
+-- DATA EXPLORATION
+
+SELECT 
+    COUNT(*) AS total_sale
+FROM
+    retail_sales;
+-- How many unique customers we have?
+SELECT 
+    COUNT(DISTINCT customer_id) AS total_sale
+FROM
+    retail_sales;
+-- Different Catergories
+SELECT DISTINCT
+    category
+FROM
+    retail_sales;
+
+-- DATA ANALYSTICS & BUSINESS KEY PRoblems & ANSWERS
+
+SELECT 
+    *
+FROM
+    retail_sales
+WHERE
+    sale_date = '2022-11-05';
+
+-- Q.2 
+SELECT 
+    *
+FROM
+    retail_sales
+WHERE
+    category = 'Clothing'
+        AND sale_date >= '2022-11-01'
+        AND sale_date < '2022-12-01'
+        AND quantiy >= '4';
+
+-- Q3
+SELECT 
+    category,
+    SUM(total_sale) AS net_sales,
+    COUNT(*) AS total_orders
+FROM
+    retail_sales
+GROUP BY category;
+
+-- Q4
+SELECT 
+    ROUND(AVG(age), 2) AS avg_age
+FROM
+    retail_sales
+WHERE
+    category = 'Beauty';
+
+-- Q5
+SELECT 
+    *
+FROM
+    retail_sales
+WHERE
+    total_sale > 1000;
+
+-- Q6
+SELECT 
+    category, gender, COUNT(*) AS total_trans
+FROM
+    retail_sales
+GROUP BY category , gender
+ORDER BY category;
+
+-- Q7 Write a SQL query to calculate the average sale for each other month. Find out best selling month in each year.
+SELECT
+Year,
+Month,
+avg_sale
+from
+(
+SELECT
+YEAR(sale_date) AS Year,
+MONTH(sale_date) AS Month,
+AVG(total_sale) as avg_sale,
+RANK() OVER (Partition By Year(sale_date) Order By AVG(total_sale) DESC)AS sales_rank
+from retail_sales
+Group by Year(sale_date),Month(sale_date) )As Ranked
+where sales_rank = 1 ;
+
+-- Q8 Write a SQl query to find the top 5 customers based on the highest total sales.
+SELECT 
+    customer_id, SUM(total_sale) AS total_sales
+FROM
+    retail_sales
+GROUP BY customer_id
+ORDER BY total_sales DESC
+LIMIT 5;
+
+-- Q.9 Write a SQl query to find the number of unique customer purchased items from each category.
+SELECT 
+    COUNT(DISTINCT customer_id) AS Unique_customers, category
+FROM
+    retail_sales
+GROUP BY category;
+
+-- Q.10 Write a SQl query to create each shift and numbers of orders ( Example Morning<=12, Afternoon Between 12 & 17, Evening >17)
+With hourly_sale
+AS(
+select *,
+CASE
+WHEN extract(Hour from sale_time) <12 Then 'Morning'
+WHEN extract(Hour from sale_time) Between 12 ANd 17 Then 'Afternon'
+Else 'Evening'
+END AS SHIFT
+from retail_sales)
+select 
+Shift,
+Count(*) AS total_orders
+from hourly_sale
+group by Shift;
+
+-- END OF PROJECT
