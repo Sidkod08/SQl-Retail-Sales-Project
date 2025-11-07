@@ -1,25 +1,6 @@
 DROP DATABASE IF EXISTS SQL_PROJECT_1;
 CREATE DATABASE IF NOT EXISTS SQL_PROJECT_1;
 DROP TABLE IF EXISTS retail_sales;
-CREATE TABLE retail_sales
-(
-transactions_id ,
-	sale_date DATE,
-	sale_time TIME,
-	customer_id	 INT,
-    gender VARCHAR(15),
-	age INT,
-	category VARCHAR(15),
-	quantiy	INT,
-    price_per_unit FLOAT,
-	cogs FLOAT,
-	total_sale FLOAT
-    );
-SELECT 
-    *
-FROM
-    sql_project_1.retail_sales;
-DROp TABLE retail_Sales;
 CREATE TABLE retail_sales (
     transactions_id INT,
     sale_date DATE,
@@ -36,7 +17,7 @@ CREATE TABLE retail_sales (
 SELECT 
     *
 FROM
-    sql_project_1.retail_sales;
+    retail_sales;
 SELECT 
     transactions_id
 FROM
@@ -72,9 +53,10 @@ WHERE
 -- DATA EXPLORATION
 
 SELECT 
-    COUNT(*) AS total_sale
+    COUNT(*)
 FROM
     retail_sales;
+
 -- How many unique customers we have?
 SELECT 
     COUNT(DISTINCT customer_id) AS total_sale
@@ -87,7 +69,7 @@ FROM
     retail_sales;
 
 -- DATA ANALYSTICS & BUSINESS KEY PRoblems & ANSWERS
-
+-- Q.1 Write a SQL query to retrieve all columns for sales made on '2022-11-05.
 SELECT 
     *
 FROM
@@ -95,7 +77,7 @@ FROM
 WHERE
     sale_date = '2022-11-05';
 
--- Q.2 
+-- Q.2 Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022.
 SELECT 
     *
 FROM
@@ -106,7 +88,7 @@ WHERE
         AND sale_date < '2022-12-01'
         AND quantiy >= '4';
 
--- Q3
+-- Q3 Write a SQL query to calculate the total sales (total_sale) for each category.
 SELECT 
     category,
     SUM(total_sale) AS net_sales,
@@ -115,7 +97,7 @@ FROM
     retail_sales
 GROUP BY category;
 
--- Q4
+-- Q4 Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.
 SELECT 
     ROUND(AVG(age), 2) AS avg_age
 FROM
@@ -123,7 +105,7 @@ FROM
 WHERE
     category = 'Beauty';
 
--- Q5
+-- Q5 Write a SQL query to find all transactions where the total_sale is greater than 1000.
 SELECT 
     *
 FROM
@@ -131,9 +113,9 @@ FROM
 WHERE
     total_sale > 1000;
 
--- Q6
+-- Q6 Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.
 SELECT 
-    category, gender, COUNT(*) AS total_trans
+    category, gender, COUNT(*) AS total_transaction
 FROM
     retail_sales
 GROUP BY category , gender
@@ -177,7 +159,7 @@ AS(
 select *,
 CASE
 WHEN extract(Hour from sale_time) <12 Then 'Morning'
-WHEN extract(Hour from sale_time) Between 12 ANd 17 Then 'Afternon'
+WHEN extract(Hour from sale_time) Between 12 ANd 17 Then 'Afternoon'
 Else 'Evening'
 END AS SHIFT
 from retail_sales)
